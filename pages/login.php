@@ -1,24 +1,28 @@
 <?php 
-    if(isset($_POST['acao'])){
-      $login = strip_tags($_POST['login']);
-      $senha = strip_tags($_POST['senha']);
+  if(isset($_POST['acao'])){
+    $login = strip_tags($_POST['login']);
+    $senha = strip_tags($_POST['senha']);
 
-      $sql = MySql::getConn()->prepare("SELECT * FROM usuarios WHERE login = ? and senha = ?");
-      $sql -> execute(array($login, $senha));
+    $sql = MySql::getConn()->prepare("SELECT * FROM usuarios WHERE login = ? and senha = ?");
+    $sql -> execute(array($login, $senha));
 
-      if($sql->rowCount() == 1){
-        // logged in
-        $_SESSION['login'] = $login;
-      } else {
-        // Failed login attempt
-        die("username or password incorrect");
-      }
-    };
-    if(isset($_SESSION['login'])){
-      echo '<script>location.href="/"</script>';
+    if($sql->rowCount() == 1){
+      // logged in
+      $_SESSION['login'] = $login;
+    } else {
+      // Failed login attempt
+      die("username or password incorrect");
     }
-    
-    if(!isset($_SESSION['login'])){
+  }
+  if(isset($_GET['acao']) && $_GET['acao'] == 'logout'){
+    unset($_SESSION['login']);
+  }
+
+  if(isset($_SESSION['login'])){
+    echo '<script>location.href="/"</script>';
+  }
+  
+  if(!isset($_SESSION['login'])){
 ?>
 <h1>Login page</h1>
 <div class="container">
@@ -27,7 +31,7 @@
     <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
     <div class="form-floating">
-      <input name="login" type="text" class="form-control" id="floatingInput" placeholder="name@example.com">
+      <input name="login" type="text" class="form-control" id="floatingInput" placeholder="Usuario">
       <label for="floatingInput">Login</label>
     </div>
     <br>
