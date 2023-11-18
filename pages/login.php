@@ -15,6 +15,7 @@
       $info = $sql->fetch();
       $_SESSION['login'] = $login;
       $_SESSION['id'] = $info['id'];
+      $_SESSION['stripe_acc'] = $info['stripe_acc'];
     } else {
       // Failed login attempt
       die("username or password incorrect");

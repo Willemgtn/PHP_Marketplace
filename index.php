@@ -1,4 +1,8 @@
 <?php
+
+use Stripe\Balance;
+use Stripe\FinancialConnections\Account;
+
   require('vendor/autoload.php');
 	include('MySql.php');
 
@@ -54,7 +58,59 @@
 
 	<?php
   if(isset($_SESSION['login'])){
-    echo '<div class="container"><h3>Bem-Vindo ' . $_SESSION['login'] . '</div>';
+    echo '<div class="container"><h3>Bem-Vindo ' . $_SESSION['login'] . '<br>';
+    print_r($_SESSION);
+    if( $_SESSION['stripe_acc' == null ]) { echo ('stripe account null'); } ;
+    echo '<hr>';
+
+    if($_SESSION['stripe_acc'] == null){
+      if(isset($_GET['sucesso_stripe_onboarding'])){
+        $account_id = $_GET['sucesso_stripe_onboarding'];
+        $atualizar = \MySql::getConn()->prepare("UPDATE usuarios SET  stripe_acc = ? WHERE id = ?");
+        $atualizar -> execute(array($account_id, $_SESSION['id']));
+        $_SESSION['stripe_acc'] = $account_id;
+        echo "<script>window.location.href='http://localhost/'</script>";
+        die();
+      };
+      // Usuario não possue conta no stripe
+      $account = \Stripe\Account::create([
+        'country' => 'BR',
+        'type' => 'standard'
+      ]);
+      $account_link = \Stripe\AccountLink::create([
+        'account' => $account['id'],
+        'refresh_url' => 'http://localhost/',
+        'return_url' => 'http://localhost/?sucesso_stripe_onboarding=' . $account['id'],
+        'type' => 'account_onboarding'
+      ]);
+      echo '<h3> Você não possui nenhuma conta bancaria associada, vamos cadastrar para voce receber o dinheiro das suas vendas!</h3>';
+      echo '<br> <a href="'.$account_link['url'].'">Clique aqui para iniciar!</a>';
+      
+    } else {
+      $stripe_acc = \MySql::getConn()->prepare("SELECT * FROM usuarios");
+      $stripe_acc->execute();
+      $stripe_acc = $stripe_acc->fetch()['stripe_acc'];
+      $account = \Stripe\Account::retrieve($stripe_acc);
+      if($account['capabilities']['card_payments'] == 'active') {
+        $balance = \Stripe\Balance::retrieve(['stripe_account' => $stripe_acc] );
+        print_r($balance);
+        echo '<hr>';
+        print_r($balance['available'][0]['amount']);
+        print_r($balance['pending'][0]['amount']);
+        echo '<h3> Seu saldo R$ ' . $balance['available'][0]['amount'] . '</h3>';
+      } else {
+        echo '<h3>Conta Stripe pendente de cadastro</h3>';
+        // print_r($account);
+        $account_link = \Stripe\AccountLink::create([
+          'account' => $account['id'],
+          'refresh_url' => 'http://localhost/',
+          'return_url' => 'http://localhost/?sucesso_stripe_onboarding=' . $account['id'],
+          'type' => 'account_onboarding'
+        ]);
+        echo '<br> <a href="'.$account_link['url'].'">Clique aqui para completar!</a>';
+      };
+      echo '<hr></div>';
+    }
   };
   if(isset($_GET['url'])) { 
     $url = $_GET['url']; 
