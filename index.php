@@ -5,24 +5,7 @@
 	session_start();
 
   \Stripe\Stripe::setApiKey($stripe_test_sk);
-  $session = \Stripe\Checkout\Session::create([
-    'line_items' => [[
-      'price_data' => [
-        'currency' => 'brl',
-        'product_data' => [
-          'name' => 'T-shirt',
-      ],
-      'unit_amount' => 2000,
-    ],
-    'quantity' => 1,
-    ]],
-    'mode' => 'payment',
-    'success_url' => 'http://localhost/?code={CHECKOUT_SESSION_ID}',
-    'cancel_url' => 'http://localhost/?code={CHECKOUT_SESSION_ID}',
-    ]);
-    echo '<hr>';
-  print_r($session);
-  echo '<a href="'.$session['url'].'">'.$session['url'].'</a>';
+ 
 ?>
 <!DOCTYPE html>
 <html>
@@ -93,7 +76,24 @@
       // print_r($usuario->fetch());
       $usuario = $usuario->fetch()['login'];
 
-      echo '<div class="container"><h2>' . $value['nome'] . '</h2><p>' . $value['descricao'] . ' por <b>' .$usuario. '</b></p> <h3>R$' . $value['preco'] . '</h3> <button class="btn btn-primary">Comprar Agora</button> <hr> </div>';
+      $strip_session = \Stripe\Checkout\Session::create([
+        'line_items' => [[
+          'price_data' => [
+            'currency' => 'brl',
+            'product_data' => [
+              'name' => $value['nome'],
+          ],
+          'unit_amount' => $value['preco'],
+        ],
+        'quantity' => 1,
+        ]],
+        'mode' => 'payment',
+        'success_url' => 'http://localhost/?code={CHECKOUT_SESSION_ID}',
+        'cancel_url' => 'http://localhost/?code={CHECKOUT_SESSION_ID}',
+        ]);
+      // echo '<a href="'.$strip_session['url'].'">'.$strip_session['url'].'</a>';
+
+      echo '<div class="container"><h2>' . $value['nome'] . '</h2><p>' . $value['descricao'] . ' por <b>' .$usuario. '</b></p> <h3>R$' . $value['preco'] . '</h3> <a href="'. $strip_session['url'] .'" class="btn btn-primary">Comprar Agora</a> <hr> </div>';
     }
   }
 
