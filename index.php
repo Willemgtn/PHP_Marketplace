@@ -1,9 +1,28 @@
 <?php
-
+  require('vendor/autoload.php');
 	include('MySql.php');
 
 	session_start();
 
+  \Stripe\Stripe::setApiKey($stripe_test_sk);
+  $session = \Stripe\Checkout\Session::create([
+    'line_items' => [[
+      'price_data' => [
+        'currency' => 'brl',
+        'product_data' => [
+          'name' => 'T-shirt',
+      ],
+      'unit_amount' => 2000,
+    ],
+    'quantity' => 1,
+    ]],
+    'mode' => 'payment',
+    'success_url' => 'http://localhost/?code={CHECKOUT_SESSION_ID}',
+    'cancel_url' => 'http://localhost/?code={CHECKOUT_SESSION_ID}',
+    ]);
+    echo '<hr>';
+  print_r($session);
+  echo '<a href="'.$session['url'].'">'.$session['url'].'</a>';
 ?>
 <!DOCTYPE html>
 <html>
@@ -62,6 +81,7 @@
       die('404, page not found');
     }
   } else {
+    
     // Homepage
     $sql = Mysql::getConn()->prepare("SELECT * from produtos");
     $sql->execute();
