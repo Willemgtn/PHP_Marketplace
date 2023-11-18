@@ -130,7 +130,7 @@ use Stripe\FinancialConnections\Account;
       $usuario = MySql::getConn()->prepare("SELECT * FROM usuarios WHERE id = $value[usuario_id]");
       $usuario->execute();
       // print_r($usuario->fetch());
-      $usuario = $usuario->fetch()['login'];
+      $usuario = $usuario->fetch();
 
       $strip_session = \Stripe\Checkout\Session::create([
         'line_items' => [[
@@ -139,17 +139,22 @@ use Stripe\FinancialConnections\Account;
             'product_data' => [
               'name' => $value['nome'],
           ],
-          'unit_amount' => $value['preco'],
+          'unit_amount' => $value['preco'],  
         ],
         'quantity' => 1,
         ]],
+        'locale' => 'pt-BR',
+        'payment_intent_data' => [
+          'application_fee_amount' => (int)($value['preco'] * 0.4),
+          'transfer_data' => ['destination' => $usuario['stripe_acc']]
+          ],
         'mode' => 'payment',
         'success_url' => 'http://localhost/?code={CHECKOUT_SESSION_ID}',
         'cancel_url' => 'http://localhost/?code={CHECKOUT_SESSION_ID}',
         ]);
       // echo '<a href="'.$strip_session['url'].'">'.$strip_session['url'].'</a>';
 
-      echo '<div class="container"><h2>' . $value['nome'] . '</h2><p>' . $value['descricao'] . ' por <b>' .$usuario. '</b></p> <h3>R$' . $value['preco'] . '</h3> <a href="'. $strip_session['url'] .'" class="btn btn-primary">Comprar Agora</a> <hr> </div>';
+      echo '<div class="container"><h2>' . $value['nome'] . '</h2><p>' . $value['descricao'] . ' por <b>' .$usuario['login']. '</b></p> <h3>R$' . $value['preco'] . '</h3> <a href="'. $strip_session['url'] .'" class="btn btn-primary">Comprar Agora</a> <hr> </div>';
     }
   }
 
