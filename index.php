@@ -41,7 +41,7 @@
           <button id="login" type="button" class="btn btn-outline-primary me-2">Login</button>
           <button id="cadastro" type="button" class="btn btn-primary">Sign-up</button>
         <?php } else { ?>
-          <button type="button" class="btn btn-primary">cadastrar produto</button>
+          <button id="cadastro_produto" type="button" class="btn btn-primary">cadastrar produto</button>
           <button id="logoff" type="button" class="btn btn-outline-primary">logout</button>
         <?php }; ?>
       </div>
@@ -59,15 +59,31 @@
     if(file_exists('pages/'.$url.'.php'))  {
       include('pages/' . $url . '.php'); 
     } else {
-      die('404, not found');
+      die('404, page not found');
     }
+  // } else {
+  //   // Homepage
+  //   $sql = Mysql::getConn()->prepare("SELECT * from produtos");
+  //   $sql->execute();
+  //   $produtos = $sql->fetchAll();
+
+  //   foreach ($produtos as $key => $value){
+  //     $usuario = MySql::getConn()->prepare("SELECT * FROM usuarios WHERE id = $value[usuario_id]");
+  //     $usuario->execute();
+  //     // print_r($usuario->fetch());
+  //     $usuario = $usuario->fetch()['login'];
+
+  //     echo '<div class="container"><h2>' . $value['nome'] . '</h2><p>' . $value['descricao'] . ' por <b>' .$usuario. '</b></p> <h3>R$' . $value['preco'] . '</h3> <button class=btn btn-primary">Comprar Agora</button> <hr> </div>';
+  //   }
   }
+
 	?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
   <script>
     document.getElementById('login')?.addEventListener('click', ()=> window.location.href="?url=login")
     document.getElementById('cadastro')?.addEventListener('click', ()=> window.location.href="?url=cadastro")
+    document.getElementById('cadastro_produto')?.addEventListener('click', ()=> window.location.href="?url=cadastro_produto")
     document.getElementById('logoff')?.addEventListener('click', ()=> window.location.href="?url=login&acao=logout")
     
   </script>

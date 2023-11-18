@@ -1,4 +1,5 @@
-<?php 
+<?php
+  if(isset($_SESSION['login'])){ die("Your already logged in.");} 
     if(isset($_POST['acao'])){
       $nome = strip_tags($_POST['nome']);
       $login = strip_tags($_POST['login']);
@@ -25,10 +26,10 @@
       echo '<script>location.href="/"</script>';
     }
     
-    if(!isset($_SESSION['login'])){
+
 ?>
-<h1>Login page</h1>
 <div class="container">
+<h1>Pagina de cadastro</h1>
   <form method="post">
     <img class="mb-4" src="/docs/5.0/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
     <h1 class="h3 mb-3 fw-normal">Cadastre-se</h1>
@@ -57,4 +58,3 @@
     <p class="mt-5 mb-3 text-muted">© 2017–2021</p>
   </form>
 </div>
-<?php }; ?>

@@ -1,4 +1,8 @@
-<?php 
+<?php
+  if(isset($_GET['acao']) && $_GET['acao'] == 'logout'){
+    unset($_SESSION['login']);
+  }
+  if(isset($_SESSION['login'])){ die("Your already logged in.");}
   if(isset($_POST['acao'])){
     $login = strip_tags($_POST['login']);
     $senha = strip_tags($_POST['senha']);
@@ -8,24 +12,24 @@
 
     if($sql->rowCount() == 1){
       // logged in
+      $info = $sql->fetch();
       $_SESSION['login'] = $login;
+      $_SESSION['id'] = $info['id'];
     } else {
       // Failed login attempt
       die("username or password incorrect");
     }
   }
-  if(isset($_GET['acao']) && $_GET['acao'] == 'logout'){
-    unset($_SESSION['login']);
-  }
+
 
   if(isset($_SESSION['login'])){
     echo '<script>location.href="/"</script>';
   }
   
-  if(!isset($_SESSION['login'])){
+
 ?>
-<h1>Login page</h1>
 <div class="container">
+<h1>Login page</h1>
   <form method="post">
     <img class="mb-4" src="/docs/5.0/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
     <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
@@ -49,4 +53,3 @@
     <p class="mt-5 mb-3 text-muted">© 2017–2021</p>
   </form>
 </div>
-<?php }; ?>
