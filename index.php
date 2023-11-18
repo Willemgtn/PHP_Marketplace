@@ -52,7 +52,7 @@
 
 	<?php
   if(isset($_SESSION['login'])){
-    echo '<h3>Bem-Vindo ' . $_SESSION['login'] ;
+    echo '<div class="container"><h3>Bem-Vindo ' . $_SESSION['login'] . '</div>';
   };
   if(isset($_GET['url'])) { 
     $url = $_GET['url']; 
@@ -61,20 +61,20 @@
     } else {
       die('404, page not found');
     }
-  // } else {
-  //   // Homepage
-  //   $sql = Mysql::getConn()->prepare("SELECT * from produtos");
-  //   $sql->execute();
-  //   $produtos = $sql->fetchAll();
+  } else {
+    // Homepage
+    $sql = Mysql::getConn()->prepare("SELECT * from produtos");
+    $sql->execute();
+    $produtos = $sql->fetchAll();
 
-  //   foreach ($produtos as $key => $value){
-  //     $usuario = MySql::getConn()->prepare("SELECT * FROM usuarios WHERE id = $value[usuario_id]");
-  //     $usuario->execute();
-  //     // print_r($usuario->fetch());
-  //     $usuario = $usuario->fetch()['login'];
+    foreach ($produtos as $key => $value){
+      $usuario = MySql::getConn()->prepare("SELECT * FROM usuarios WHERE id = $value[usuario_id]");
+      $usuario->execute();
+      // print_r($usuario->fetch());
+      $usuario = $usuario->fetch()['login'];
 
-  //     echo '<div class="container"><h2>' . $value['nome'] . '</h2><p>' . $value['descricao'] . ' por <b>' .$usuario. '</b></p> <h3>R$' . $value['preco'] . '</h3> <button class=btn btn-primary">Comprar Agora</button> <hr> </div>';
-  //   }
+      echo '<div class="container"><h2>' . $value['nome'] . '</h2><p>' . $value['descricao'] . ' por <b>' .$usuario. '</b></p> <h3>R$' . $value['preco'] . '</h3> <button class="btn btn-primary">Comprar Agora</button> <hr> </div>';
+    }
   }
 
 	?>
